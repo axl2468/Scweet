@@ -186,6 +186,8 @@ if __name__ == '__main__':
                         help='Min. number of likes to the tweet', default=None)
     parser.add_argument('--minretweets', type=int,
                         help='Min. number of retweets to the tweet', default=None)
+    parser.add_argument('--filter_repeating_users', type=int,
+                        help='Min. number of retweets to the tweet', default=None)
                             
 
     args = parser.parse_args()
@@ -209,8 +211,9 @@ if __name__ == '__main__':
     minreplies = args.minreplies
     minlikes = args.minlikes
     minretweets = args.minlikes
+    filter_repeating_users = args.filter_repeating_users
 
     data = scrape(since=since, until=until, words=words, to_account=to_account, from_account=from_account, mention_account=mention_account,
                 hashtag=hashtag, interval=interval, lang=lang, headless=headless, limit=limit,
                 display_type=display_type, resume=resume, proxy=proxy, filter_replies=False, proximity=proximity,
-                geocode=geocode, minreplies=minreplies, minlikes=minlikes, minretweets=minretweets)
+                geocode=geocode, minreplies=minreplies, minlikes=minlikes, minretweets=minretweets, filter_repeating_users=filter_repeating_users)
