@@ -13,7 +13,7 @@ from .utils import init_driver, get_last_date_from_csv, log_search_page, keep_sc
 def scrape(since, until=None, words=None, to_account=None, from_account=None, mention_account=None, interval=5, lang=None,
           headless=True, limit=float("inf"), display_type="Top", resume=False, proxy=None, hashtag=None, 
           show_images=False, save_images=False, save_dir="outputs", filter_replies=False, proximity=False, 
-          geocode=None, minreplies=None, minlikes=None, minretweets=None):
+          geocode=None, minreplies=None, minlikes=None, minretweets=None, filter_repeating_users=False):
     """
     scrape data from twitter using requests, starting from <since> until <until>. The program make a search between each <since> and <until_local>
     until it reaches the <until> date if it's given, else it stops at the actual date.
@@ -41,6 +41,8 @@ def scrape(since, until=None, words=None, to_account=None, from_account=None, me
         until = datetime.date.today().strftime("%Y-%m-%d")
     # set refresh at 0. we refresh the page for each <interval> of time.
     refresh = 0
+    # used if filter_repeating_users=None, all found users are stored in this variable
+    users_extracted = set()
 
     # ------------------------- settings :
     # file path
@@ -113,7 +115,7 @@ def scrape(since, until=None, words=None, to_account=None, from_account=None, me
             sleep(random.uniform(0.5, 1.5))
             # start scrolling and get tweets
             driver, data, writer, tweet_ids, scrolling, tweet_parsed, scroll, last_position = \
-                keep_scroling(driver, data, writer, tweet_ids, scrolling, tweet_parsed, limit, scroll, last_position)
+                keep_scroling(driver, data, writer, tweet_ids, scrolling, tweet_parsed, limit, scroll, last_position, users_extracted, filter_repeating_users)
 
             # keep updating <start date> and <end date> for every search
             if type(since) == str:

@@ -257,7 +257,7 @@ def log_in(driver, env, timeout=20, wait=4):
     sleep(random.uniform(wait, wait + 1))
 
 
-def keep_scroling(driver, data, writer, tweet_ids, scrolling, tweet_parsed, limit, scroll, last_position,
+def keep_scroling(driver, data, writer, tweet_ids, scrolling, tweet_parsed, limit, scroll, last_position, userlist, filter_repeating_users=False,
                   save_images=False):
     """ scrolling function for tweets crawling"""
 
@@ -274,10 +274,15 @@ def keep_scroling(driver, data, writer, tweet_ids, scrolling, tweet_parsed, limi
         for card in page_cards:
             tweet = get_data(card, save_images, save_images_dir)
             if tweet:
-                # check if the tweet is unique
-                tweet_id = ''.join(tweet[:-2])
-                if tweet_id not in tweet_ids:
+                #Situation 1: repeating users are filtered out
+                
+                tweet_user = tweet[0]
+                tweet_id = ''.join(tweet[:-2]) # check if the tweet is unique
+                if filter_repeating_users and tweet_user in userlist:
+                    print("Tweet found but duplicate user. Ignoring.")
+                elif tweet_id not in tweet_ids:
                     tweet_ids.add(tweet_id)
+                    userlist.add(tweet_user)
                     data.append(tweet)
                     last_date = str(tweet[2])
                     print("Tweet made at: " + str(last_date) + " is found.")
